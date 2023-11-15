@@ -15,9 +15,9 @@ class Comments {
   final List<String>? retweeted_on;
   final int d_status;
   final List<String>? taggedPeople;
-  // final int commented_by_blue_status;
+  final int commented_by_blue_status;
   final String commented_by_name;
-  // final String commented_by_username;
+  final String commented_by_username;
   final String commented_by_avi;
 
   //final String tweeted_by_name;
@@ -40,10 +40,10 @@ class Comments {
     required this.retweeted_by,
     required this.retweeted_on,
     required this.d_status,
-    // required this.commented_by_blue_status,
+    required this.commented_by_blue_status,
     required this.taggedPeople,
     required this.commented_by_name,
-    // required this.commented_by_username,
+    required this.commented_by_username,
     required this.commented_by_avi,
   });
 
@@ -61,10 +61,10 @@ class Comments {
       'retweeted_by': retweeted_by,
       'retweeted_on': retweeted_on,
       'd_status': d_status,
-      // 'commented_by_blue_status': commented_by_blue_status,
+      'commented_by_blue_status': commented_by_blue_status,
       'taggedPeople': taggedPeople,
       'commented_by_name': commented_by_name,
-      // 'commented_by_username': commented_by_username,
+      'commented_by_username': commented_by_username,
       'commented_by_avi': commented_by_avi,
     };
   }
@@ -102,8 +102,8 @@ class Comments {
       d_status: map['d_status'] as int,
       taggedPeople: List<String>.from((map['taggedPeople'] as List)),
       commented_by_name: map['commented_by_name'] as String,
-      // commented_by_username: map['commented_by_username'] as String,
-      // commented_by_blue_status: map['commented_by_blue_status'] as int,
+      commented_by_username: map['commented_by_username'] as String,
+      commented_by_blue_status: map['commented_by_blue_status'] as int,
       commented_by_avi: map['commented_by_avi'] as String,
 
     );

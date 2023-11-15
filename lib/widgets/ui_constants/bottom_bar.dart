@@ -8,6 +8,7 @@ import 'package:twitter_clone/theme/pallete.dart';
 import 'package:twitter_clone/widgets/ui_constants/assets_constants.dart';
 import 'package:twitter_clone/widgets/ui_constants/bottomNavBarPages.dart';
 import 'package:twitter_clone/widgets/ui_constants/mainAppBar.dart';
+import 'package:twitter_clone/widgets/ui_constants/side_menu.dart';
 
 class BottomBar extends StatefulWidget {
   const BottomBar({super.key});
@@ -19,6 +20,7 @@ class BottomBar extends StatefulWidget {
 class _BottomBarState extends State<BottomBar> {
 
   int _page = 0;
+  final GlobalKey<ScaffoldState> _key = GlobalKey(); // Create a key
 
   void onPageChange(int index){
 
@@ -35,11 +37,17 @@ class _BottomBarState extends State<BottomBar> {
   @override
   Widget build(BuildContext context) {
 
+
+
     return WillPopScope(
         onWillPop: () async {
           return false;
           },
         child: Scaffold(
+          drawer: Drawer(
+            backgroundColor: myColors.mainBackgroundColor,
+              child: SideMenu()
+          ),
           body: IndexedStack(
             index: _page,
             children: BottomNavBarPages.allWidgets
@@ -56,7 +64,13 @@ class _BottomBarState extends State<BottomBar> {
               size: 28,
             ),
           ),
-          appBar: MainAppBar(isMainScreen: true,),
+          appBar: MainAppBar(
+              isMainScreen: true,
+              openDrawer: (){
+                print('drawer Opened');
+               // Scaffold.of(context).openDrawer();
+
+              }),
           bottomNavigationBar: CupertinoTabBar(
             backgroundColor: myColors.mainBackgroundColor,
             currentIndex: _page,

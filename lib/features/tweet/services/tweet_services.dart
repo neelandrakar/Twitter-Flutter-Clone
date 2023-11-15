@@ -24,7 +24,6 @@ class TweetServices {
   }) async {
 
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    print('api called');
 
     final cloudinary = CloudinaryPublic('dhfiapa0x', 'giscyuqg');
     List<String> imageUrls = [];
@@ -229,7 +228,7 @@ class TweetServices {
             allFetchedComments.add(Comments.fromJson(jsonEncode(jsonDecode(res.body)[i])));
             }
 
-            showSnackBar(context, 'Comments fetched successfully');
+            showSnackBar(context, 'Comments fetched successfullyyy');
           });
     } catch (e) {
       showSnackBar(context, e.toString());
@@ -237,5 +236,93 @@ class TweetServices {
     }
 
     return allFetchedComments;
+  }
+
+  void replyToATweet({
+    required BuildContext context,
+    required VoidCallback onSuccess,
+    required String content,
+    required String id,
+    required List<File> imageFile,
+    required List<File> videoFile,
+  }) async {
+
+    print('called file ${imageFile.length}');
+
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    final cloudinary = CloudinaryPublic('dhfiapa0x', 'giscyuqg');
+    List<String> imageUrls = [];
+    List<String> videoUrls = [];
+
+    for (int i = 0; i < imageFile.length; i++) {
+      CloudinaryResponse res = await cloudinary.uploadFile(
+          CloudinaryFile.fromFile(imageFile[i].path, folder: 'All Tweets'));
+
+      imageUrls.add(res.secureUrl);
+    }
+
+    // for (int i = 0; i < imageFile.length; i++) {
+    //   CloudinaryResponse res = await cloudinary
+    //       .uploadFile(CloudinaryFile.fromFile(imageFile[i].path, folder: 'tweets'));
+    //
+    //   imageUrls.add(res.secureUrl);
+    // }
+
+    try {
+      Map data = {
+        'content': content,
+        'imageUrl': imageUrls,
+        'videoUrl': videoUrls,
+        'parent_tweet': id
+      };
+
+      String jsonBody = jsonEncode(data);
+
+      print(jsonBody);
+
+      http.Response res = await http.post(Uri.parse('$uri/api/comment/'),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'x-auth-token': userProvider.user.token,
+          },
+          body: jsonBody);
+
+      HttpErrorHandle(
+          response: res,
+          context: context,
+          onSuccess: () {
+
+            print(jsonDecode(res.body));
+            
+            showSnackBar(context, 'Reply has been added');
+            List<Tweets> tweets = Provider.of<TweetProvider>(context, listen: false).tweets;
+            Comments newComment = Comments.fromMap(jsonDecode(res.body));
+
+            for(int i=0; i< tweets.length; i++){
+              if(id == tweets[i].id){
+                print('found');
+                tweets[i].comments!.add(newComment);
+                break;
+              }
+            }
+
+            //This will work too
+            // List<Tweet> tweets = Provider.of<TweetProvider>(context, listen: false).tweets;
+            //
+            // for (Tweet tweet in tweets) {
+            //   if (id == tweet.id) {
+            //     tweet.comments!.add(jsonDecode(res.body));
+            //     break;
+            //   }
+            // }
+
+
+            onSuccess();
+          });
+    } catch (e) {
+      showSnackBar(context, e.toString());
+      print(e.toString());
+    }
   }
 }

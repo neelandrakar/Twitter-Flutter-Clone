@@ -8,7 +8,8 @@ import '../../theme/pallete.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isMainScreen;
-  const MainAppBar({super.key, this.isMainScreen = false});
+  final VoidCallback? openDrawer;
+  const MainAppBar({super.key, this.isMainScreen = false,  this.openDrawer});
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +39,14 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       leading: isMainScreen ? Container(
         margin: EdgeInsets.all(10),
-        child: CircleAvatar(
-          backgroundImage: backgroundImageProvider,
-          radius: 15,
+        child: GestureDetector(
+          onTap: (){
+            Scaffold.of(context).openDrawer();
+          },
+          child: CircleAvatar(
+              backgroundImage: backgroundImageProvider,
+              radius: 15,
+          ),
         ),
       ) : null,
         bottom: PreferredSize(

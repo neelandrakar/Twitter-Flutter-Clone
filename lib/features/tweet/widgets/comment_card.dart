@@ -10,7 +10,8 @@ import 'hashtag_text.dart';
 
 class CommentCard extends StatefulWidget {
   final Comments comments;
-  const CommentCard({super.key, required this.comments});
+  final replyingTo;
+  const CommentCard({super.key, required this.comments, required this.replyingTo});
 
   @override
   State<CommentCard> createState() => _CommentCardState();
@@ -26,10 +27,11 @@ class _CommentCardState extends State<CommentCard> {
   Widget build(BuildContext context) {
 
     String userProfilePic = widget.comments.commented_by_avi;
-    int totalComments = 2;
+    int totalComments = 1;
     int totalRetweets = widget.comments.retweeted_by!.length;
     int totalLikes = widget.comments.liked_by!.length;
     int totalViews = totalComments + totalRetweets + totalLikes;
+    bool isLiked = false;
 
     if (userProfilePic != '') {
       backgroundImageProvider = NetworkImage(userProfilePic);
@@ -75,7 +77,7 @@ class _CommentCardState extends State<CommentCard> {
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
-                                fontSize: 16
+                                fontSize: 14
                             ),
                           ),
                           SizedBox(width: 3),
@@ -85,7 +87,7 @@ class _CommentCardState extends State<CommentCard> {
                                 height: 18,
                                 child: SvgPicture.asset(AssetsConstants.verifiedIcon)),
                           SizedBox(width: 3),
-                          Text('@${'johnoe'} • ${timeago.format(widget.comments.commented_at,locale: 'en_short')}',
+                          Text('@${widget.comments.commented_by_username} • ${timeago.format(widget.comments.commented_at,locale: 'en_short')}',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                             style: TextStyle(
@@ -103,11 +105,28 @@ class _CommentCardState extends State<CommentCard> {
                   ),
                 ),
                 SizedBox(height: 5),
+                Row(
+                  children: [
+                    Text(
+                      'Replying to ',
+                      style: TextStyle(
+                        color: Pallete.greyColor
+                      ),
+                    ),
+                    Text(
+                      '@${widget.replyingTo}',
+                      style: TextStyle(
+                          color: Pallete.blueColor
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 5),
                 Container(
                     width: 270,
                     child: HashTagText(text: widget.comments.content)
                 ),
-                if(widget.comments.imageUrls!= [])
+                if(widget.comments.imageUrls!.length>0)
                   Container(
                     width: 270,
                     child: GridView.count(
@@ -161,7 +180,7 @@ class _CommentCardState extends State<CommentCard> {
                       LikeButton(
 
                         size: 18,
-                        isLiked: true,
+                        isLiked: isLiked,
                         likeBuilder: (isLiked) {
                           return isLiked
                               ? SvgPicture.asset(

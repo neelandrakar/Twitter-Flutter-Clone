@@ -13,19 +13,27 @@ class User {
   final String token;
   final String? profilePicture;
   final String? coverPicture;
-  User({
-    required this.id,
-    required this.name,
-    required this.username,
-    required this.email,
-    required this.mobno,
-    required this.birthDate,
-    required this.password,
-    required this.token,
-    this.hasBlue,
-    this.profilePicture,
-    this.coverPicture,
-  });
+  final List<String>? followed_by;
+  final List<DateTime>? followed_on;
+  final List<String>? user_followed;
+  final List<DateTime>? user_followed_on;
+
+  User(
+      {required this.id,
+      required this.name,
+      required this.username,
+      required this.email,
+      required this.mobno,
+      required this.birthDate,
+      required this.password,
+      required this.token,
+      this.hasBlue,
+      this.profilePicture,
+      this.coverPicture,
+      this.followed_by,
+      this.followed_on,
+      this.user_followed,
+      this.user_followed_on});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -40,6 +48,10 @@ class User {
       'token': token,
       'profilePicture': profilePicture,
       'coverPicture': coverPicture,
+      'followed_on': followed_on,
+      'followed_by': followed_by,
+      'user_followed': user_followed,
+      'user_followed_on': user_followed_on
     };
   }
 
@@ -56,6 +68,17 @@ class User {
       hasBlue: map['hasBlue'] as int,
       profilePicture: map['profilePicture'] as String,
       coverPicture: map['coverPicture'] as String,
+      followed_by: List<String>.from(
+        (map['followers'] as List).map((like) => like['followed_by'] as String),
+      ),
+      followed_on: List<DateTime>.from((map['followers'] as List)
+          .map((fol) => DateTime.parse(fol['followed_on']))),
+      user_followed: List<String>.from(
+        (map['following'] as List)
+            .map((like) => like['user_followed'] as String),
+      ),
+      user_followed_on: List<DateTime>.from((map['following'] as List)
+          .map((fol2) => DateTime.parse(fol2['user_followed_on']))),
     );
   }
 

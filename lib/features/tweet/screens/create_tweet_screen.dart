@@ -27,7 +27,7 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
 
   List<File> images = [];
   List<File> imageFiles = [];
-  List<File> videoFiles = [];
+  List<File> videos = [];
 
   static const appBarGradient = LinearGradient(
     colors: [
@@ -83,7 +83,6 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
 
     void postMyTweet(){
 
-      print('hello ${_tweetTextController.text}');
       tweetServices.createATweet(
           context: context,
           onSuccess: (){
@@ -91,17 +90,20 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
           },
           content: _tweetTextController.text,
           imageFile: images,
-          videoFile: videoFiles);
+          videoFile: videos);
 
 
     }
 
 
     return Scaffold(
-      appBar: CreateTweetAppBar(
+      appBar:
+        CreateTweetAppBar(
         postTweet: () {
           postMyTweet();
-      }, tweetLength: _tweetTextController.text,),
+      },
+        tweetLength: _tweetTextController.text,
+        postButtonName: 'Post',),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -149,14 +151,12 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
                             decoration: InputDecoration(
                               hintText: "   What's happening?",
                               hintStyle: TextStyle(
-                                color: Colors.white38,
+                                color: Pallete.postHintColor,
                                 // fontWeight: FontWeight.w600
                               ),
                               border: InputBorder.none,
                             ),
-                          )
-
-                      ,
+                          ),
                       SizedBox(height: 15,),
 
                       if(images.isNotEmpty)
@@ -240,7 +240,7 @@ class _CreateTweetScreenState extends State<CreateTweetScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0).copyWith(left: 15,right: 15),
-                child: Icon(Icons.poll,color: Pallete.blueColor,),
+                child: Icon(Icons.poll_outlined,color: Pallete.blueColor,),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0).copyWith(left: 15,right: 15),

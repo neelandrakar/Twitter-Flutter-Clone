@@ -9,7 +9,14 @@ import 'package:twitter_clone/widgets/ui_constants/assets_constants.dart';
 class CreateTweetAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback postTweet;
   final String tweetLength;
-  const CreateTweetAppBar({super.key, required this.postTweet, required this.tweetLength});
+  final String postButtonName;
+  final bool showDrafts;
+  const CreateTweetAppBar({
+    super.key,
+    required this.postTweet,
+    required this.tweetLength,
+    required this.postButtonName,
+    this.showDrafts = true});
 
   @override
   State<CreateTweetAppBar> createState() => _CreateTweetAppBarState();
@@ -23,6 +30,13 @@ class _CreateTweetAppBarState extends State<CreateTweetAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(1),
+        child: Container(
+          color: Pallete.bottomBorderColor,
+          height: 1,
+        ),
+      ),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -32,13 +46,20 @@ class _CreateTweetAppBarState extends State<CreateTweetAppBar> {
 
         ),
       actions: [
-        Center(child: Text('Drafts',style: TextStyle(fontWeight: FontWeight.bold,color: Pallete.blueColor,fontSize: 16),)),
+        if(widget.showDrafts)
+        Center(
+            child: Text(
+              'Drafts',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Pallete.blueColor,
+                  fontSize: 16),)),
         RoundedSmallButton(
           onTap: (){
             print(widget.tweetLength.length > 1);
               widget.postTweet.call();
           },
-          label: 'Post',
+          label: widget.postButtonName,
           backgroundColor: Pallete.blueColor,
           textColor: myColors.whiteColor,)
       ],

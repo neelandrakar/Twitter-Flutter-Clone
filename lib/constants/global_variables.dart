@@ -8,7 +8,7 @@
   String signUpPassword = '';
   int signUpPhone = 0;
   String signUpdateOfBirth = '';
-  String uri = 'http://192.168.111.6:3000';
+  String uri = 'http://192.168.55.6:3000';
   String loginCred = '';
   String tweetedByUsername = '';
 

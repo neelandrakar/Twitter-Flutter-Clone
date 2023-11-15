@@ -6,6 +6,7 @@ import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter_clone/constants/global_variables.dart';
 import 'package:twitter_clone/constants/my_colors.dart';
+import 'package:twitter_clone/features/home/screens/home_screen.dart';
 import 'package:twitter_clone/features/tweet/screens/tweet_details.dart';
 import 'package:twitter_clone/features/tweet/widgets/hashtag_text.dart';
 import 'package:twitter_clone/features/tweet/widgets/tweet_icon_button.dart';
@@ -14,6 +15,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import '../../../models/tweets.dart';
 import '../../../providers/user_provider.dart';
 import '../../../widgets/ui_constants/assets_constants.dart';
+import '../screens/reply_screen.dart';
 import '../services/tweet_services.dart';
 
 class TweetCard extends StatefulWidget {
@@ -27,6 +29,19 @@ class TweetCard extends StatefulWidget {
 class _TweetCardState extends State<TweetCard> {
 
   ImageProvider<Object> backgroundImageProvider = AssetImage(AssetsConstants.searchIcon);
+
+  void openReplyScreen(BuildContext context) {
+    showModalBottomSheet(
+      useSafeArea: true,
+      enableDrag: false,
+      context: context,
+      isScrollControlled: true, // Makes the sheet full screen
+      builder: (BuildContext context) {
+        return ReplyScreen(tweet: widget.tweets);
+      },
+    );
+  }
+
 
 
 
@@ -207,6 +222,7 @@ class _TweetCardState extends State<TweetCard> {
                             pathName: AssetsConstants.commentIcon,
                             text: totalComments.toString(),
                             onTap: (){
+                              openReplyScreen(context);
                             }),
                         TweetIconButton(
                           pathName: AssetsConstants.retweetIcon,

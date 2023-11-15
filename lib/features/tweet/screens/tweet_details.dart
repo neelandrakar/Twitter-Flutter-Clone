@@ -31,7 +31,7 @@ class _TweetDetailsState extends State<TweetDetails> {
 
   final TweetServices tweetServices = TweetServices();
 
-  void fetchAllComments () async {
+  /*void fetchAllComments () async {
 
     allFetchedComments = await tweetServices.fetchAllComments(context: context, id: widget.tweet.id);
     setState(() {});
@@ -47,7 +47,7 @@ class _TweetDetailsState extends State<TweetDetails> {
     });
 
     //print(allFetchedTweets.toString());
-  }
+  }*/
 
 
   @override
@@ -286,13 +286,13 @@ class _TweetDetailsState extends State<TweetDetails> {
                   children: [
                     TweetIconButton(
                         pathName: AssetsConstants.commentIcon,
-                        text: totalComments.toString(),
+                        // text: totalComments.toString(),
                         onTap: (){
                         }),
                     TweetIconButton(
                       pathName: AssetsConstants.retweetIcon,
                       color: retweetColor,
-                      text: totalRetweets.toString(),
+                      // text: totalRetweets.toString(),
                       onTap: () {
                         setState(() {
                           retweetColor = Colors.pink;
@@ -316,7 +316,7 @@ class _TweetDetailsState extends State<TweetDetails> {
                             AssetsConstants.likeOutlinedIcon,
                             color: Pallete.greyColor);
                       },
-                      likeCount: totalLikes,
+                      // likeCount: totalLikes,
                       countBuilder: (likeCount, isLiked, text){
                         return Text(
                           text,
@@ -331,7 +331,7 @@ class _TweetDetailsState extends State<TweetDetails> {
 
                     TweetIconButton(
                         pathName: AssetsConstants.viewsIcon,
-                        text: totalViews.toString(),
+                        // text: totalViews.toString(),
                         onTap: (){}),
                     TweetIconButton(
                         pathName: AssetsConstants.shareIcon,
@@ -347,11 +347,12 @@ class _TweetDetailsState extends State<TweetDetails> {
                 thickness: 1,
               ),
               SizedBox(height: 10,),
+              if(widget.tweet.comments!.length>0)
               ListView.builder(
-                  itemCount: allFetchedComments!.length,
+                  itemCount: widget.tweet.comments!.length,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
-                    return CommentCard(comments: allFetchedComments![index]);
+                    return CommentCard(comments: widget.tweet.comments![index],replyingTo: widget.tweet.tweeted_by_username,);
                     // return Text('hello', style: TextStyle(color: Colors.white));
                   },
                 ),

@@ -4,6 +4,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
+const pushNotiRouter = require('./routes/pushNotification');
 
 const app = express();
 const PORT = 3000;
@@ -14,6 +15,7 @@ const DB = 'mongodb+srv://neelandra:Neelandra123@cluster0.htzaxnp.mongodb.net/?r
 app.use(express.json());
 app.use(authRouter);
 app.use(userRouter);
+app.use(pushNotiRouter);
 
 //connections
 mongoose.connect(DB)

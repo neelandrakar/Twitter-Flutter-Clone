@@ -60,13 +60,27 @@ const userSchema = mongoose.Schema({
     },
 
     followers:[{
-        type: String,
-        default: '',
+
+        followed_by: {
+            type: String,
+        },
+
+        followed_on: {
+            type: Date,
+        }
+        
     }],
 
-    following: [{
-        type: String,
-        default: '',
+    following:[{
+
+        user_followed: {
+            type: String,
+        },
+
+        user_followed_on: {
+            type: Date,
+        }
+        
     }],
 
     created_at : {

@@ -108,11 +108,11 @@ class Tweets {
         tweeted_by_avi: map['tweeted_by_avi'] as String,
         is_tweeted_by_blue: map['is_tweeted_by_blue'] as int,
         hasUserLiked: map['hasUserLiked'] as int,
-        hasUserRetweeted: map['hasUserRetweeted'] as int
-    );
+        hasUserRetweeted: map['hasUserRetweeted'] as int);
   }
 
   String toJson() => json.encode(toMap());
 
   factory Tweets.fromJson(String source) => Tweets.fromMap(json.decode(source));
+
 }

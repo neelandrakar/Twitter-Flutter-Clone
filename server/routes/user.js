@@ -82,9 +82,21 @@ userRouter.get('/api/get-tweets', auth, async (req,res) => {
 
         const userId = req.user;
         let user = await User.findById(userId);
-        const followingIds = user.following;
+        let followingIds = [];
+        let followed_on = [];
+
+        for(let i=0; i< user.following.length; i++){
+
+            followingIds.push(user.following[i].user_followed);
+            // followed_on.push(user.following[i].user_followed_on);
+        }
+
+        console.log(followingIds);
+        console.log(followed_on);
 
         const tweetAuthors = [userId,...followingIds];
+
+        console.log(tweetAuthors);
     
 
 
@@ -145,25 +157,40 @@ userRouter.get('/api/get-tweets', auth, async (req,res) => {
             return user ? user.profilePicture : '';
         }
 
+        let commentsWithNewKeys = [];
+
+        async function getComments(Tweet){
 
 
-        // const tweeted_by_id = tweets.map(tweet => tweet.tweeted_by);     //Getting tweeted_by after mapping through tweet
-        // console.log(tweeted_by_id);
+                commentsWithNewKeys = await Promise.all(Tweet.comments.map(async comment => ({
+                ...comment,    
+                "commented_by_name": await getTweetersName(comment.commented_by),
+                "commented_by_username": await getTweetersUsername(comment.commented_by),
+                "commented_by_avi": await getTweetersProfilePic(comment.commented_by),
+                "commented_by_blue_status": await getTweetersBlueStatus(comment.commented_by),
+            })));
+
+            return Tweet ? commentsWithNewKeys : [];
+        }
 
         const tweetsWithData = await Promise.all(tweets.map(async tweet => ({
             ...tweet.toObject(), // Convert Mongoose document to plain JavaScript object
+            
             tweeted_by_name: await getTweetersName(tweet.tweeted_by),
             tweeted_by_username: await getTweetersUsername(tweet.tweeted_by),
             is_tweeted_by_blue : await getTweetersBlueStatus(tweet.tweeted_by),
             tweeted_by_avi : await getTweetersProfilePic(tweet.tweeted_by),
             hasUserLiked : await getLikedStatus(tweet),
-            hasUserRetweeted : await getRetweetStatus(tweet)
+            hasUserRetweeted : await getRetweetStatus(tweet),
+            comments: await getComments(tweet) // Add the modified comments array to the tweet object
+
         })));
 
         tweetsWithData.sort((a, b) => b.tweeted_at - a.tweeted_at);
 
 
         res.json(tweetsWithData);
+        // res.json('hello');
 
     }catch(e){
         res.status(500).json({ msg: e.message });
@@ -252,36 +279,58 @@ userRouter.post('/api/retweet-a-tweet', auth, async (req,res) =>{
 
 //Comment on a tweet
 
-userRouter.post('/api/comment', auth, async(req, res) =>{
+userRouter.post('/api/comment', auth, async (req, res) => {
+    try {
+        console.log('api called');
+        const { content, imageUrl, videoUrl, parent_tweet } = req.body;
 
-    try{
-
-        const{ content, imageUrl, videoUrl, parent_tweet } = req.body;
+        console.log(req.body);
 
         const commented_by = req.user;
+        let commented_by_user = await User.findById(commented_by);
 
         let tweet = await Tweet.findById(parent_tweet);
 
+        const commented_by_name = commented_by_user ? commented_by_user.name : '';
+        const commented_by_username = commented_by_user ? commented_by_user.username : '';
+        const commented_by_avi = commented_by_user ? commented_by_user.profilePicture : '';
+        const commented_by_blue_status = commented_by_user ? commented_by_user.hasBlue : 0;
 
-        const commentSchema = new Comment({
+        const attachments = {
+            imageUrls: imageUrl,
+            videoUrls: videoUrl
+          };
+
+
+
+        const newComment = new Comment({
             content,
             parent_tweet,
-            commented_by
+            commented_by,
+            attachments,
+            commented_by_name
         });
 
-        //await commentSchema.save();
-
-        tweet.comments.push(commentSchema);
+        tweet.comments.push(newComment);
 
         tweet = await tweet.save();
-        res.json(tweet);
+
+        const formattedResponse = {
+            ...newComment.toObject(),
+            "commented_by_name": commented_by_name,
+            "commented_by_username": commented_by_username,
+            "commented_by_avi": commented_by_avi,
+            "commented_by_blue_status": commented_by_blue_status,
+        };
+
+        res.json(formattedResponse);
 
 
-
-    }catch(e){
+    } catch (e) {
         res.status(500).json({ msg: e.message });
     }
 });
+
 
 module.exports = userRouter;
 
@@ -357,9 +406,34 @@ userRouter.get('/api/get-comments', auth, async (req,res) => {
 
         
 
-        res.json(commentsWithData);
+        res.json(response);
 
     }catch(e){
         res.status(500).json({ msg: e.message });
     }
 } );
+
+//Follow an user
+
+userRouter.post('/api/follow', auth, async (req,res) => {
+
+    try{
+    const { following_user_id } = req.body;
+
+    const user_id = req.user;
+
+    let user = await User.findById(user_id);
+
+    user.following.push({
+        user_followed: following_user_id,
+        user_followed_on: Date.now()
+    });
+
+    res.status(200).json(user);
+    
+    }catch(e){
+        res.status(500).json({msg: e.message});
+    }
+
+    
+});

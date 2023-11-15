@@ -9,4 +9,5 @@ class Pallete {
   static const Color redColor = Color.fromRGBO(249, 25, 127, 1);
   static const Color bottomBorderColor = Colors.white10;
   static const Color greenColor = Colors.green;
+  static const Color postHintColor = Colors.white38;
 }
