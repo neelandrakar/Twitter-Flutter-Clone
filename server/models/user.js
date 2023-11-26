@@ -44,6 +44,11 @@ const userSchema = mongoose.Schema({
         type: String,
     },
 
+    bio: {
+        required: true,
+        type: String
+    },
+
     hasBlue:{
         type: Number,
         default: 0

@@ -46,7 +46,8 @@ class _BottomBarState extends State<BottomBar> {
         child: Scaffold(
           drawer: Drawer(
             backgroundColor: myColors.mainBackgroundColor,
-              child: SideMenu()
+              child: SideMenu(),
+            width: 280,
           ),
           body: IndexedStack(
             index: _page,

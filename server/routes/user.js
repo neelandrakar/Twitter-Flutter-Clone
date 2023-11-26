@@ -229,7 +229,7 @@ userRouter.post('/api/like-a-tweet', auth, async (req,res) =>{
         await tweet.save();
 
         res.json({ msg: 'Successfully Liked'});
-    }
+        }
         
 
     }catch(e){
@@ -418,22 +418,42 @@ userRouter.get('/api/get-comments', auth, async (req,res) => {
 userRouter.post('/api/follow', auth, async (req,res) => {
 
     try{
+        
     const { following_user_id } = req.body;
 
     const user_id = req.user;
 
     let user = await User.findById(user_id);
+    let userIsAlreadyFollowed = false;
+
+    for(let i = 0; i < user.following.length; i++){
+
+        if(user.following[i].user_followed === following_user_id){
+            user.following.splice(i, 1); // Remove the element at index i
+            user = await user.save();
+            userIsAlreadyFollowed = true;
+            // res.json({ msg: 'Successfully Unfollowed'});
+            res.status(200).json(user);
+            break; 
+        }
+   }
+
+    if(!userIsAlreadyFollowed){
 
     user.following.push({
         user_followed: following_user_id,
         user_followed_on: Date.now()
     });
 
+    user = await user.save();
+
+    // res.json({ msg: 'Successfully Followed'});
+    // console.log(userIsAlreadyFollowed);
     res.status(200).json(user);
-    
-    }catch(e){
-        res.status(500).json({msg: e.message});
+
     }
 
-    
+    }catch(e){
+        res.status(500).json({msg: e.message});
+    }    
 });

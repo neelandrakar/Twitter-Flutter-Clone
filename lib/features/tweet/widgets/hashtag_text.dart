@@ -3,7 +3,8 @@ import 'package:twitter_clone/theme/pallete.dart';
 
 class HashTagText extends StatelessWidget {
   final String text;
-  const HashTagText({super.key, required this.text});
+  final Color textColor;
+  const HashTagText({super.key, required this.text, this.textColor=Pallete.whiteColor});
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +39,7 @@ class HashTagText extends StatelessWidget {
                 text: '$element ',
                 style: TextStyle(
                     fontSize: 14,
+                    color: textColor
                 )
             )
         );

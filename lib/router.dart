@@ -5,8 +5,10 @@ import 'package:twitter_clone/features/auth/screens/signup_screen_four.dart';
 import 'package:twitter_clone/features/auth/screens/signup_screen_one.dart';
 import 'package:twitter_clone/features/auth/screens/signup_screen_three.dart';
 import 'package:twitter_clone/features/auth/screens/signup_screen_two.dart';
+import 'package:twitter_clone/features/profile/screens/profile_screen.dart';
 import 'package:twitter_clone/features/tweet/screens/create_tweet_screen.dart';
 import 'package:twitter_clone/features/tweet/screens/tweet_details.dart';
+import 'package:twitter_clone/models/user.dart';
 
 import 'models/tweets.dart';
 
@@ -60,6 +62,13 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => TweetDetails(tweet: tweet),
+      );
+
+    case ProfileScreen.routeName:
+      // var user = routeSettings.arguments as User;
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => ProfileScreen(),
       );
 
     default:

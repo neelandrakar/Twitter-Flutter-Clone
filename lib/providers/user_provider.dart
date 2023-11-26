@@ -11,7 +11,8 @@ class UserProvider extends ChangeNotifier{
       mobno: 0,
       birthDate: '',
       password: '',
-      token: ''
+      token: '',
+      bio: ''
   );
 
   User get user => _user;

@@ -42,7 +42,19 @@ class _TweetCardState extends State<TweetCard> {
     );
   }
 
+  final TweetServices tweetServices = TweetServices();
 
+
+  void retweetATweet(){
+
+    tweetServices.retweetATweet(
+      context: context,
+      tweets: widget.tweets,
+    );
+    setState(() {
+
+    });
+  }
 
 
   @override
@@ -58,7 +70,6 @@ class _TweetCardState extends State<TweetCard> {
 
     bool isLiked = widget.tweets.hasUserLiked==1;
     bool isRetweeted = widget.tweets.hasUserRetweeted==1;
-    final TweetServices tweetServices = TweetServices();
 
 
     void likeATweet(){
@@ -86,13 +97,7 @@ class _TweetCardState extends State<TweetCard> {
     }
 
 
-    void retweetATweet(){
 
-      tweetServices.retweetATweet(
-          context: context,
-          tweets: widget.tweets,
-      );
-    }
 
 
     if (userProfilePic != '') {
@@ -124,123 +129,142 @@ class _TweetCardState extends State<TweetCard> {
         ),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
             children: [
-              CircleAvatar(
-                backgroundImage: backgroundImageProvider,
-                radius: 22,
-              ),
-              const SizedBox(width: 10),
-              Column(
+              if(widget.tweets.hasUserRetweeted==1)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    children: [
+                      SizedBox(width: 40),
+                      SvgPicture.asset(AssetsConstants.retweetIcon,color: Pallete.postHintColor,height: 16,),
+                      SizedBox(width: 10),
+                      Text('You reposted',
+                        style: TextStyle(
+                            color: Pallete.postHintColor,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold
+                        ),)
+                    ],
+                  ),
+                ),
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 270,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
+                  CircleAvatar(
+                    backgroundImage: backgroundImageProvider,
+                    radius: 22,
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 270,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              widget.tweets.tweeted_by_name,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontSize: 16
-                              ),
-                            ),
-                            SizedBox(width: 3),
-                            if(widget.tweets.is_tweeted_by_blue==1)
-                              Container(
-                                  width: 18,
-                                  height: 18,
-                                  child: SvgPicture.asset(AssetsConstants.verifiedIcon)),
-                            SizedBox(width: 3),
-                            Text('@${widget.tweets.tweeted_by_username} • ${timeago.format(widget.tweets.tweeted_at,locale: 'en_short')}',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: TextStyle(
-                                  color: Pallete.greyColor,
-                                  fontSize: 14
-                              ),)
-                          ],
-                        ),
-                        Icon(
-                          Icons.more_vert_outlined,
-                          color: Pallete.greyColor,
-                          size: 15,
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Container(
-                      width: 270,
-                      child: HashTagText(text: widget.tweets.content)
-                  ),
-                  if(widget.tweets.imageUrls!= [])
-                    Container(
-                      width: 270,
-                      child: GridView.count(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10.0,
-                        mainAxisSpacing: 10.0,
-                        physics: BouncingScrollPhysics(),
-                        shrinkWrap: true,
-                        children: widget.tweets.imageUrls!.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final imageFiles = entry.value;
-                          return Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Stack(
+                            Row(
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: NetworkImage(imageFiles.toString()),
-                                      fit: BoxFit.cover,
-                                    ),
-                                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                Text(
+                                  widget.tweets.tweeted_by_name,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontSize: 16
                                   ),
                                 ),
+                                SizedBox(width: 3),
+                                if(widget.tweets.is_tweeted_by_blue==1)
+                                  Container(
+                                      width: 18,
+                                      height: 18,
+                                      child: SvgPicture.asset(AssetsConstants.verifiedIcon)),
+                                SizedBox(width: 3),
+                                Text('@${widget.tweets.tweeted_by_username} • ${timeago.format(widget.tweets.tweeted_at,locale: 'en_short')}',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      color: Pallete.greyColor,
+                                      fontSize: 14
+                                  ),)
                               ],
                             ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  SizedBox(height: 5),
-                  Container(
-                    width: 270,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TweetIconButton(
-                            pathName: AssetsConstants.commentIcon,
-                            text: totalComments.toString(),
-                            onTap: (){
-                              openReplyScreen(context);
-                            }),
-                        TweetIconButton(
-                          pathName: AssetsConstants.retweetIcon,
-                          color: calculateRetweetButtonColor(),
-                          text: totalRetweets.toString(),
-                          onTap: () {
-                            setState(() {
-                              textDemo = 'yoo';
-                            });
-                            retweetATweet();
-                            changeRetweetStatus(); // Update the retweet status
-                          },
+                            Icon(
+                              Icons.more_vert_outlined,
+                              color: Pallete.greyColor,
+                              size: 15,
+                            )
+                          ],
                         ),
+                      ),
+                      SizedBox(height: 5),
+                      Container(
+                          width: 270,
+                          child: HashTagText(text: widget.tweets.content,textColor: Pallete.whiteColor,)
+                      ),
+                      if(widget.tweets.imageUrls!= [])
+                        Container(
+                          width: 270,
+                          child: GridView.count(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10.0,
+                            mainAxisSpacing: 10.0,
+                            physics: BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            children: widget.tweets.imageUrls!.asMap().entries.map((entry) {
+                              final index = entry.key;
+                              final imageFiles = entry.value;
+                              return Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: NetworkImage(imageFiles.toString()),
+                                          fit: BoxFit.cover,
+                                        ),
+                                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      SizedBox(height: 5),
+                      Container(
+                        width: 270,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TweetIconButton(
+                                pathName: AssetsConstants.commentIcon,
+                                text: totalComments.toString(),
+                                onTap: (){
+                                  openReplyScreen(context);
+                                }),
+                            TweetIconButton(
+                              pathName: AssetsConstants.retweetIcon,
+                              color: calculateRetweetButtonColor(),
+                              text: totalRetweets.toString(),
+                              onTap: () {
+                                setState(() {
+                                  textDemo = 'yoo';
+                                });
+                                retweetATweet();
+                                changeRetweetStatus(); // Update the retweet status
+                              },
+                            ),
 
 
-                        LikeButton(
+                            LikeButton(
 
-                          onTap: tweetServices.exampleFunction,
+                              onTap: tweetServices.exampleFunction,
 
 
                               size: 18,
@@ -251,36 +275,38 @@ class _TweetCardState extends State<TweetCard> {
                                     AssetsConstants.likeFilledIcon,
                                     color: Pallete.redColor)
                                     : SvgPicture.asset(
-                                  AssetsConstants.likeOutlinedIcon,
-                                  color: Pallete.greyColor);
+                                    AssetsConstants.likeOutlinedIcon,
+                                    color: Pallete.greyColor);
                               },
                               likeCount: totalLikes,
                               countBuilder: (likeCount, isLiked, text){
                                 return Text(
                                   text,
                                   style: TextStyle(
-                                    color: isLiked ? Pallete.redColor : Pallete.greyColor,
-                                    fontSize: 13
+                                      color: isLiked ? Pallete.redColor : Pallete.greyColor,
+                                      fontSize: 13
                                   ),
                                 );
                               },
 
                             ),
 
-                        TweetIconButton(
-                            pathName: AssetsConstants.viewsIcon,
-                            text: totalViews.toString(),
-                            onTap: (){}),
-                        TweetIconButton(
-                            pathName: AssetsConstants.shareIcon,
-                            onTap: (){
-                              likeATweet();
-                            }),
-                      ],
-                    ),
+                            TweetIconButton(
+                                pathName: AssetsConstants.viewsIcon,
+                                text: totalViews.toString(),
+                                onTap: (){}),
+                            TweetIconButton(
+                                pathName: AssetsConstants.shareIcon,
+                                onTap: (){
+                                  likeATweet();
+                                }),
+                          ],
+                        ),
+                      )
+                    ],
                   )
                 ],
-              )
+              ),
             ],
           ),
         ),

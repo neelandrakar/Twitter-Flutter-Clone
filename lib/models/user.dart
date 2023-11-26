@@ -9,6 +9,8 @@ class User {
   final int mobno;
   final String birthDate;
   final String password;
+  final DateTime? created_at;
+  final String? bio;
   final int? hasBlue;
   final String token;
   final String? profilePicture;
@@ -26,6 +28,8 @@ class User {
       required this.mobno,
       required this.birthDate,
       required this.password,
+      this.bio,
+      this.created_at,
       required this.token,
       this.hasBlue,
       this.profilePicture,
@@ -44,6 +48,8 @@ class User {
       'mobno': mobno,
       'birthDate': birthDate,
       'password': password,
+      'bio': bio,
+      'created_at': created_at,
       'hasBlue': hasBlue,
       'token': token,
       'profilePicture': profilePicture,
@@ -64,7 +70,9 @@ class User {
       mobno: map['mobno'] as int,
       birthDate: map['birthDate'] as String,
       password: map['password'] as String,
+      bio: map['bio'] as String,
       token: map['token'] as String,
+      created_at: DateTime.parse(map['created_at']),
       hasBlue: map['hasBlue'] as int,
       profilePicture: map['profilePicture'] as String,
       coverPicture: map['coverPicture'] as String,
@@ -91,6 +99,8 @@ class User {
     String? name,
     String? username,
     String? email,
+    String? bio,
+    DateTime? created_at,
     int? mobno,
     String? birthDate,
     String? password,
@@ -105,6 +115,7 @@ class User {
       username: username ?? this.username,
       email: email ?? this.email,
       mobno: mobno ?? this.mobno,
+      bio: bio ?? this.bio,
       birthDate: birthDate ?? this.birthDate,
       password: password ?? this.password,
       token: token ?? this.token,
