@@ -3,12 +3,17 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter_clone/constants/my_colors.dart';
+import 'package:twitter_clone/features/profile/services/profile_services.dart';
+import 'package:twitter_clone/features/profile/widgets/liked_tweets.dart';
+import 'package:twitter_clone/features/profile/widgets/media_tweets.dart';
+import 'package:twitter_clone/features/profile/widgets/my_posts.dart';
 import 'package:twitter_clone/features/profile/widgets/profile_tabs.dart';
 import 'package:twitter_clone/features/tweet/widgets/hashtag_text.dart';
 import 'package:twitter_clone/theme/pallete.dart';
 import 'package:twitter_clone/widgets/custom_widgets/custom_button.dart';
 import 'package:twitter_clone/widgets/ui_constants/assets_constants.dart';
 
+import '../../../models/tweets.dart';
 import '../../../models/user.dart';
 import '../../../providers/user_provider.dart';
 
@@ -22,6 +27,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
   @override
   Widget build(BuildContext context) {
 
@@ -60,7 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
     return SafeArea(
-      child: NestedScrollView(
+        child: NestedScrollView(
 
           headerSliverBuilder: (context, innerBoxIsSelected){
             return [
@@ -141,18 +147,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             SizedBox(height: 12),
                             HashTagText(
-                                text: user.bio!,
-                                textColor: Pallete.whiteColorSecond,),
+                              text: user.bio!,
+                              textColor: Pallete.whiteColorSecond,),
                             SizedBox(height: 12),
                             Row(
                               children: [
                                 Icon(Icons.calendar_month_outlined,color: Pallete.postHintColor,size: 15,),
                                 SizedBox(width: 5),
                                 Text('Joined $joinedDate',
-                                style: TextStyle(
-                                    color: Pallete.postHintColor,
-                                    fontSize: 16
-                                ),)
+                                  style: TextStyle(
+                                      color: Pallete.postHintColor,
+                                      fontSize: 16
+                                  ),)
                               ],
                             ),
                             SizedBox(height: 12),
@@ -198,70 +204,83 @@ class _ProfileScreenState extends State<ProfileScreen> {
           body: DefaultTabController(
             length: 5,
             child: Scaffold(
-              appBar: AppBar(
-                automaticallyImplyLeading: false,
-                toolbarHeight: 60, // Set this height
-                flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(color: Pallete.bottomBorderColor,width: 1)
-                    )
-                  ),
-                  child: const TabBar(
+              appBar: PreferredSize(
+                preferredSize: Size.fromHeight(40),
+                child: AppBar(
+                    automaticallyImplyLeading: false,
+                    bottom: PreferredSize(
+                      preferredSize: Size.fromHeight(35),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(color: Pallete.bottomBorderColor,width: 1)
+                          )
+                        ),
+                        child: TabBar(
 
-                      unselectedLabelColor: Pallete.postHintColor,
-                      indicatorColor: Pallete.blueColor,
-                      labelColor: Pallete.whiteColorSecond,
-                      isScrollable: true,
-                      tabs: [
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Text('Posts',
-                          style: TextStyle(
-                            fontSize: 16
-                          ),
-                          ),
+                            unselectedLabelColor: Pallete.postHintColor,
+                            indicatorColor: Pallete.blueColor,
+                            labelColor: Pallete.whiteColorSecond,
+                            isScrollable: true,
+                            tabs: [
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 10),
+                                child: Text('Posts',
+                                  style: TextStyle(
+                                      fontSize: 16
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 10),
+                                child: Text('Replies',
+                                  style: TextStyle(
+                                      fontSize: 16
+                                  ),),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 10),
+                                child: Text('Highlights',
+                                  style: TextStyle(
+                                      fontSize: 16
+                                  ),),
+                              ),
+                              Text('Media',
+                                style: TextStyle(
+                                    fontSize: 16
+                                ),),
+                              Text('Likes',
+                                style: TextStyle(
+                                    fontSize: 17
+                                ),),
+                            ]
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Text('Replies',
-                            style: TextStyle(
-                                fontSize: 16
-                            ),),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Text('Highlights',
-                            style: TextStyle(
-                                fontSize: 16
-                            ),),
-                        ),
-                        Text('Media',
-                          style: TextStyle(
-                              fontSize: 16
-                          ),),
-                        Text('Likes',
-                          style: TextStyle(
-                              fontSize: 17
-                          ),),
-                      ]
-                  )
+                      ),
+                    )
                 ),
               ),
-              body: TabBarView(
+
+              body: Column(
                 children: [
+                  SizedBox(height: 5),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        MyPosts(user: user),
+                        Text('Replies Screen',style: TextStyle(color: Pallete.whiteColor),),
+                        Text('Highlights Screen',style: TextStyle(color: Pallete.whiteColor),),
+                        MediaTweets(user: user),
+                        LikedTweets(user: user),
 
-                  Text('Posts Screen',style: TextStyle(color: Pallete.whiteColor),),
-                  Text('Replies Screen',style: TextStyle(color: Pallete.whiteColor),),
-                  Text('Highlights Screen',style: TextStyle(color: Pallete.whiteColor),),
-                  Text('Media Screen',style: TextStyle(color: Pallete.whiteColor),),
-                  Text('Likes Screen',style: TextStyle(color: Pallete.whiteColor),),
-
+                      ],
+                    ),
+                  ),
                 ],
               ),
 
             ),
-          )),
+          ),
+        )
     );
   }
 }

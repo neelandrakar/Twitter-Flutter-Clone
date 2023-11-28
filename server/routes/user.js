@@ -332,7 +332,6 @@ userRouter.post('/api/comment', auth, async (req, res) => {
 });
 
 
-module.exports = userRouter;
 
 //Fetch comments
 
@@ -440,8 +439,8 @@ userRouter.post('/api/follow', auth, async (req,res) => {
 
     if(!userIsAlreadyFollowed){
 
-    user.following.push({
-        user_followed: following_user_id,
+    user.push({
+        user_ffollowingollowed: following_user_id,
         user_followed_on: Date.now()
     });
 
@@ -457,3 +456,435 @@ userRouter.post('/api/follow', auth, async (req,res) => {
         res.status(500).json({msg: e.message});
     }    
 });
+
+userRouter.post('/api/get-my-tweets', auth, async (req,res) => {
+
+    try{
+
+       // console.log('get tweets api called');
+
+        const { userId } = req.body;
+        let user = await User.findById(userId);
+
+        let myTweets = [];
+
+
+        
+        const tweets = await Tweet.find({
+            // tweeted_by: userId,
+            d_status : 0
+        });
+
+
+        //Adding my tweets
+        for(let i=0; i<tweets.length; i++){
+
+            if(tweets[i].tweeted_by===userId){
+                let tweetId = tweets[i].id;
+                myTweets.push(tweetId);
+            }
+        }
+
+
+        for(let i=0; i<tweets.length; i++){
+
+            let tweet = tweets[i];
+
+            for(let j=0; j<tweet.retweets.length; j++){
+
+            if(tweet.retweets[j].retweeted_by===userId){
+                
+                let retweetedTweets = tweets[i].id;
+                myTweets.push(retweetedTweets);
+                break;
+            }
+          }
+        }
+
+        const allTweets = await Tweet.find({
+            _id: { $in: myTweets },
+            d_status : 0
+        });
+
+        console.log(tweets.length);
+        console.log(allTweets.length);
+
+
+        async function getLikedStatus(tweets) {
+            let userHasLiked = false;
+        
+            for (let i = 0; i < tweets.likes.length; i++) {
+                if (tweets.likes[i].liked_by === userId) {
+                    userHasLiked = true;
+                    break; // Assuming you want to stop checking once a match is found
+                }
+            }
+        
+            return userHasLiked ? 1 : 0;
+        }
+
+        async function getRetweetStatus(tweets) {
+            let userHasRetweeted = false;
+        
+            for (let i = 0; i < tweets.retweets.length; i++) {
+                if (tweets.retweets[i].retweeted_by === userId) {
+                    userHasRetweeted = true;
+                    break; // Assuming you want to stop checking once a match is found
+                }
+            }
+        
+            return userHasRetweeted ? 1 : 0;
+        }
+        
+
+
+        async function getTweetersName(tweeted_by_id) {
+
+            let user = await User.findById(tweeted_by_id);
+            return user ? user.name : ''
+        }
+
+        async function getTweetersUsername(tweeted_by_id) {
+            let user = await User.findById(tweeted_by_id);
+            return user ? user.username : ''; // Check if user exists
+        }
+
+        async function getTweetersBlueStatus(tweeted_by_id){
+
+            let user = await User.findById(tweeted_by_id);
+            return user ? user.hasBlue : 0;
+        }
+
+        async function getTweetersProfilePic(tweeted_by_id){
+
+            let user = await User.findById(tweeted_by_id);
+            return user ? user.profilePicture : '';
+        }
+
+        let commentsWithNewKeys = [];
+
+        async function getComments(Tweet){
+
+
+                commentsWithNewKeys = await Promise.all(Tweet.comments.map(async comment => ({
+                ...comment,    
+                "commented_by_name": await getTweetersName(comment.commented_by),
+                "commented_by_username": await getTweetersUsername(comment.commented_by),
+                "commented_by_avi": await getTweetersProfilePic(comment.commented_by),
+                "commented_by_blue_status": await getTweetersBlueStatus(comment.commented_by),
+            })));
+
+            return Tweet ? commentsWithNewKeys : [];
+        }
+
+        const tweetsWithData = await Promise.all(allTweets.map(async tweet => ({
+            ...tweet.toObject(), // Convert Mongoose document to plain JavaScript object
+            
+            tweeted_by_name: await getTweetersName(tweet.tweeted_by),
+            tweeted_by_username: await getTweetersUsername(tweet.tweeted_by),
+            is_tweeted_by_blue : await getTweetersBlueStatus(tweet.tweeted_by),
+            tweeted_by_avi : await getTweetersProfilePic(tweet.tweeted_by),
+            hasUserLiked : await getLikedStatus(tweet),
+            hasUserRetweeted : await getRetweetStatus(tweet),
+            comments: await getComments(tweet) // Add the modified comments array to the tweet object
+
+        })));
+
+        tweetsWithData.sort((a, b) => b.tweeted_at - a.tweeted_at);
+
+
+        res.json(tweetsWithData);
+        // res.json('hello');
+
+    }catch(e){
+        res.status(500).json({ msg: e.message });
+    }
+});
+
+userRouter.post('/api/get-liked-tweets', auth, async (req,res) => {
+
+    try{
+
+       // console.log('get tweets api called');
+
+        const { userId } = req.body;
+        let user = await User.findById(userId);
+        let likedTweets = [];
+
+
+
+        
+        const tweets = await Tweet.find({
+            // tweeted_by: userId,
+            d_status : 0
+        });
+
+
+
+        for(let i=0; i<tweets.length; i++){
+
+            let tweet = tweets[i];
+
+            for(let j=0; j<tweet.likes.length; j++){
+
+            if(tweet.likes[j].liked_by===userId){
+                
+                let likedTweet = tweets[i].id;
+                likedTweets.push(likedTweet);
+                break;
+            }
+          }
+        }
+
+        console.log(likedTweets.length);
+
+        const allTweets = await Tweet.find({
+            _id: { $in: likedTweets },
+            d_status : 0
+        });
+
+
+
+        async function getLikedStatus(tweets) {
+            let userHasLiked = false;
+        
+            for (let i = 0; i < tweets.likes.length; i++) {
+                if (tweets.likes[i].liked_by === userId) {
+                    userHasLiked = true;
+                    break; // Assuming you want to stop checking once a match is found
+                }
+            }
+        
+            return userHasLiked ? 1 : 0;
+        }
+
+        async function getRetweetStatus(tweets) {
+            let userHasRetweeted = false;
+        
+            for (let i = 0; i < tweets.retweets.length; i++) {
+                if (tweets.retweets[i].retweeted_by === userId) {
+                    userHasRetweeted = true;
+                    break; // Assuming you want to stop checking once a match is found
+                }
+            }
+        
+            return userHasRetweeted ? 1 : 0;
+        }
+        
+
+
+        async function getTweetersName(tweeted_by_id) {
+
+            let user = await User.findById(tweeted_by_id);
+            return user ? user.name : ''
+        }
+
+        async function getTweetersUsername(tweeted_by_id) {
+            let user = await User.findById(tweeted_by_id);
+            return user ? user.username : ''; // Check if user exists
+        }
+
+        async function getTweetersBlueStatus(tweeted_by_id){
+
+            let user = await User.findById(tweeted_by_id);
+            return user ? user.hasBlue : 0;
+        }
+
+        async function getTweetersProfilePic(tweeted_by_id){
+
+            let user = await User.findById(tweeted_by_id);
+            return user ? user.profilePicture : '';
+        }
+
+        let commentsWithNewKeys = [];
+
+        async function getComments(Tweet){
+
+
+                commentsWithNewKeys = await Promise.all(Tweet.comments.map(async comment => ({
+                ...comment,    
+                "commented_by_name": await getTweetersName(comment.commented_by),
+                "commented_by_username": await getTweetersUsername(comment.commented_by),
+                "commented_by_avi": await getTweetersProfilePic(comment.commented_by),
+                "commented_by_blue_status": await getTweetersBlueStatus(comment.commented_by),
+            })));
+
+            return Tweet ? commentsWithNewKeys : [];
+        }
+
+        const tweetsWithData = await Promise.all(allTweets.map(async tweet => ({
+            ...tweet.toObject(), // Convert Mongoose document to plain JavaScript object
+            
+            tweeted_by_name: await getTweetersName(tweet.tweeted_by),
+            tweeted_by_username: await getTweetersUsername(tweet.tweeted_by),
+            is_tweeted_by_blue : await getTweetersBlueStatus(tweet.tweeted_by),
+            tweeted_by_avi : await getTweetersProfilePic(tweet.tweeted_by),
+            hasUserLiked : await getLikedStatus(tweet),
+            hasUserRetweeted : await getRetweetStatus(tweet),
+            comments: await getComments(tweet) // Add the modified comments array to the tweet object
+
+        })));
+
+        async function getLikedTime(tweet){
+            let likedTime;
+            for(let i=0; i<tweet.likes.length; i++){
+                likedTime = tweet.likes[i].tweeted_at;
+            }
+            return tweet.likes.length>0 ? likedTime : 0;
+        }
+
+
+        tweetsWithData.sort((a, b) => b.tweeted_at - a.tweeted_at);
+
+
+        res.json(tweetsWithData);
+        // res.json('hello');
+
+    }catch(e){
+        res.status(500).json({ msg: e.message });
+    }
+});
+
+userRouter.post('/api/get-media-tweets', auth, async (req,res) => {
+
+    try{
+
+       // console.log('get tweets api called');
+
+        const { userId } = req.body;
+        let user = await User.findById(userId);
+        let mediaTweets = [];
+
+
+
+        
+        const tweets = await Tweet.find({
+            tweeted_by: userId,
+            d_status : 0
+        });
+
+
+
+        for(let i=0; i<tweets.length; i++){
+
+            let tweet = tweets[i];
+
+
+            if(tweet.attachments.imageUrls.length>0 || tweet.attachments.videoUrls.length>0){
+                
+                let mediaTweet = tweet.id;
+                mediaTweets.push(mediaTweet);
+            }
+          }
+        
+
+        console.log(mediaTweets.length);
+
+        const allTweets = await Tweet.find({
+            _id: { $in: mediaTweets },
+            d_status : 0
+        });
+
+
+
+        async function getLikedStatus(tweets) {
+            let userHasLiked = false;
+        
+            for (let i = 0; i < tweets.likes.length; i++) {
+                if (tweets.likes[i].liked_by === userId) {
+                    userHasLiked = true;
+                    break; // Assuming you want to stop checking once a match is found
+                }
+            }
+        
+            return userHasLiked ? 1 : 0;
+        }
+
+        async function getRetweetStatus(tweets) {
+            let userHasRetweeted = false;
+        
+            for (let i = 0; i < tweets.retweets.length; i++) {
+                if (tweets.retweets[i].retweeted_by === userId) {
+                    userHasRetweeted = true;
+                    break; // Assuming you want to stop checking once a match is found
+                }
+            }
+        
+            return userHasRetweeted ? 1 : 0;
+        }
+        
+
+
+        async function getTweetersName(tweeted_by_id) {
+
+            let user = await User.findById(tweeted_by_id);
+            return user ? user.name : ''
+        }
+
+        async function getTweetersUsername(tweeted_by_id) {
+            let user = await User.findById(tweeted_by_id);
+            return user ? user.username : ''; // Check if user exists
+        }
+
+        async function getTweetersBlueStatus(tweeted_by_id){
+
+            let user = await User.findById(tweeted_by_id);
+            return user ? user.hasBlue : 0;
+        }
+
+        async function getTweetersProfilePic(tweeted_by_id){
+
+            let user = await User.findById(tweeted_by_id);
+            return user ? user.profilePicture : '';
+        }
+
+        let commentsWithNewKeys = [];
+
+        async function getComments(Tweet){
+
+
+                commentsWithNewKeys = await Promise.all(Tweet.comments.map(async comment => ({
+                ...comment,    
+                "commented_by_name": await getTweetersName(comment.commented_by),
+                "commented_by_username": await getTweetersUsername(comment.commented_by),
+                "commented_by_avi": await getTweetersProfilePic(comment.commented_by),
+                "commented_by_blue_status": await getTweetersBlueStatus(comment.commented_by),
+            })));
+
+            return Tweet ? commentsWithNewKeys : [];
+        }
+
+        const tweetsWithData = await Promise.all(allTweets.map(async tweet => ({
+            ...tweet.toObject(), // Convert Mongoose document to plain JavaScript object
+            
+            tweeted_by_name: await getTweetersName(tweet.tweeted_by),
+            tweeted_by_username: await getTweetersUsername(tweet.tweeted_by),
+            is_tweeted_by_blue : await getTweetersBlueStatus(tweet.tweeted_by),
+            tweeted_by_avi : await getTweetersProfilePic(tweet.tweeted_by),
+            hasUserLiked : await getLikedStatus(tweet),
+            hasUserRetweeted : await getRetweetStatus(tweet),
+            comments: await getComments(tweet) // Add the modified comments array to the tweet object
+
+        })));
+
+        async function getLikedTime(tweet){
+            let likedTime;
+            for(let i=0; i<tweet.likes.length; i++){
+                likedTime = tweet.likes[i].tweeted_at;
+            }
+            return tweet.likes.length>0 ? likedTime : 0;
+        }
+
+
+        tweetsWithData.sort((a, b) => b.tweeted_at - a.tweeted_at);
+
+
+        res.json(tweetsWithData);
+        // res.json('hello');
+
+    }catch(e){
+        res.status(500).json({ msg: e.message });
+    }
+});
+
+module.exports = userRouter;
