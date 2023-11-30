@@ -6,6 +6,8 @@ const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
 const pushNotiRouter = require('./routes/pushNotification');
 const employeeRouter = require('./routes/employee');
+const tweetRouter = require('./routes/tweet');
+var mysql = require('mysql2');
 
 const app = express();
 const PORT = 3000;
@@ -18,6 +20,7 @@ app.use(authRouter);
 app.use(userRouter);
 app.use(pushNotiRouter);
 app.use(employeeRouter);
+app.use(tweetRouter);
 
 //connections
 mongoose.connect(DB)

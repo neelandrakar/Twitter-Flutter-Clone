@@ -44,7 +44,7 @@ class _MediaTweetsState extends State<MediaTweets> {
       child: allMediaTweets!.length>0 ? ListView.builder(
           itemCount: allMediaTweets!.length,
           itemBuilder: (context,index){
-            return TweetCard(tweets: allMediaTweets![index]);
+            return TweetCard(tweets: allMediaTweets![index], hideRetweetedText: true,);
           }) : SpinKitRing(color: Pallete.blueColor,lineWidth: 4,size: 40,),
     );
   }

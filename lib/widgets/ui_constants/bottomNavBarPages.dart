@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/features/home/screens/home_screen.dart';
 import 'package:twitter_clone/features/notification/screens/notification_screen.dart';
-import 'package:twitter_clone/features/search/search_screen.dart';
+import 'package:twitter_clone/features/search/screens/search_screen.dart';
 
 class BottomNavBarPages{
 
@@ -9,7 +9,9 @@ class BottomNavBarPages{
 
       HomeScreen(),
       SearchScreen(),
-      NotificationScreen()
+      Center(child: Text('Community',style: TextStyle(color: Colors.white),),),
+      NotificationScreen(),
+      Center(child: Text('Messages',style: TextStyle(color: Colors.white),),),
 
     ];
 }

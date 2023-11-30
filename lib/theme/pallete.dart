@@ -11,4 +11,5 @@ class Pallete {
   static const Color bottomBorderColor = Colors.white10;
   static const Color greenColor = Colors.green;
   static const Color postHintColor = Colors.white38;
+  static const Color searchFieldColor = Colors.white12;
 }

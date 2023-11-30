@@ -45,7 +45,7 @@ class _LikedTweetsState extends State<LikedTweets> {
       child:  allLikedTweets!.length>0 ? ListView.builder(
           itemCount: allLikedTweets!.length,
           itemBuilder: (context,index){
-            return TweetCard(tweets: allLikedTweets![index],isLikedTweets: true,);
+            return TweetCard(tweets: allLikedTweets![index],hideRetweetedText: true,);
           }) : SpinKitRing(color: Pallete.blueColor,lineWidth: 4,size: 40,),
     );
   }

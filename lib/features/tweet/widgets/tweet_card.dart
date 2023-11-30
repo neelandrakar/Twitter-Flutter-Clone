@@ -20,8 +20,8 @@ import '../services/tweet_services.dart';
 
 class TweetCard extends StatefulWidget {
   final Tweets tweets;
-  final bool isLikedTweets;
-  TweetCard({super.key, required this.tweets, this.isLikedTweets = false});
+  final bool hideRetweetedText;
+  TweetCard({super.key, required this.tweets, this.hideRetweetedText = false});
 
   @override
   State<TweetCard> createState() => _TweetCardState();
@@ -132,7 +132,7 @@ class _TweetCardState extends State<TweetCard> {
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
-              if(widget.tweets.hasUserRetweeted==1 && widget.isLikedTweets==false)
+              if(widget.tweets.hasUserRetweeted==1 && widget.hideRetweetedText==false)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Row(

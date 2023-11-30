@@ -211,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     bottom: PreferredSize(
                       preferredSize: Size.fromHeight(35),
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           border: Border(
                             bottom: BorderSide(color: Pallete.bottomBorderColor,width: 1)
                           )
@@ -221,10 +221,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             unselectedLabelColor: Pallete.postHintColor,
                             indicatorColor: Pallete.blueColor,
                             labelColor: Pallete.whiteColorSecond,
+                            // labelStyle: TextStyle(
+                            //   fontSize: 20
+                            // ),
                             isScrollable: true,
                             tabs: [
                               Padding(
-                                padding: EdgeInsets.only(bottom: 10),
+                                padding: EdgeInsets.only(bottom: 5),
                                 child: Text('Posts',
                                   style: TextStyle(
                                       fontSize: 16
@@ -232,27 +235,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(bottom: 10),
+                                padding: EdgeInsets.only(bottom: 5),
                                 child: Text('Replies',
                                   style: TextStyle(
                                       fontSize: 16
                                   ),),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(bottom: 10),
+                                padding: EdgeInsets.only(bottom: 5),
                                 child: Text('Highlights',
                                   style: TextStyle(
                                       fontSize: 16
                                   ),),
                               ),
-                              Text('Media',
-                                style: TextStyle(
-                                    fontSize: 16
-                                ),),
-                              Text('Likes',
-                                style: TextStyle(
-                                    fontSize: 17
-                                ),),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 5),
+                                child: Text('Media',
+                                  style: TextStyle(
+                                      fontSize: 16
+                                  ),),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 5),
+                                child: Text('Likes',
+                                  style: TextStyle(
+                                      fontSize: 16
+                                  ),),
+                              ),
                             ]
                         ),
                       ),

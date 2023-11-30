@@ -65,8 +65,11 @@ class _BottomBarState extends State<BottomBar> {
               size: 28,
             ),
           ),
-          appBar: MainAppBar(
+          appBar:
+              _page==1 ? null :
+            MainAppBar(
               isMainScreen: true,
+              isSearchScreen: _page==1 ? true : false,
               openDrawer: (){
                 print('drawer Opened');
                // Scaffold.of(context).openDrawer();
@@ -92,9 +95,13 @@ class _BottomBarState extends State<BottomBar> {
                     _page == 1 ? AssetsConstants.searchIcon : AssetsConstants.searchIcon,
                     color: myColors.whiteColor,)),
               BottomNavigationBarItem(
+                  icon: Icon(Icons.people,color: Pallete.whiteColor,)),
+              BottomNavigationBarItem(
                   icon: SvgPicture.asset(
                     _page == 2 ? AssetsConstants.notifFilledIcon : AssetsConstants.notifOutlinedIcon,
                     color: myColors.whiteColor,)),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.mail_outline,color: Pallete.whiteColor,)),
             ],
 
           ),

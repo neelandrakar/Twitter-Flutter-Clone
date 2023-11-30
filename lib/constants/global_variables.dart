@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:twitter_clone/widgets/ui_constants/assets_constants.dart';
 
-bool isSignUpPageCheckBoxChecked = true;
+  bool isSignUpPageCheckBoxChecked = true;
+  TextEditingController searchController = TextEditingController();
   DateTime signUpbirthDate = DateTime.now();
   bool isEmailSelected = false;
   String signUpName = '';

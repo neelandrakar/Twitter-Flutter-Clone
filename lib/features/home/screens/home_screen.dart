@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter_clone/features/tweet/services/tweet_services.dart';
 import 'package:twitter_clone/features/tweet/widgets/tweet_card.dart';
+import 'package:twitter_clone/theme/pallete.dart';
 import 'package:twitter_clone/widgets/ui_constants/mainAppBar.dart';
 
 import '../../../models/tweets.dart';
@@ -50,13 +52,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Center(
         child:
+          tweetProvider.tweets.length>0 ? 
           ListView.builder(
             itemCount: tweetProvider.tweets.length,
               itemBuilder: (context,index){
 
 
               return TweetCard(tweets: tweetProvider.tweets[index]);
-              })
+              }) : SpinKitRing(color: Pallete.blueColor, size: 40, lineWidth: 4,)
       ),
     );
   }

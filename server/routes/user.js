@@ -68,7 +68,7 @@ userRouter.post('/api/tweet', auth, async (req,res) => {
         // res.json(response);
 
     } catch(e){
-        res.status(500).json({msg: e.message});
+        res.status(500).json({error: e.message});
     }
 });
 
@@ -457,6 +457,7 @@ userRouter.post('/api/follow', auth, async (req,res) => {
     }    
 });
 
+//Fetch my tweets
 userRouter.post('/api/get-my-tweets', auth, async (req,res) => {
 
     try{
@@ -601,6 +602,7 @@ userRouter.post('/api/get-my-tweets', auth, async (req,res) => {
     }
 });
 
+//Fetch liked tweets
 userRouter.post('/api/get-liked-tweets', auth, async (req,res) => {
 
     try{
@@ -745,6 +747,7 @@ userRouter.post('/api/get-liked-tweets', auth, async (req,res) => {
     }
 });
 
+//Fetch media tweets
 userRouter.post('/api/get-media-tweets', auth, async (req,res) => {
 
     try{
