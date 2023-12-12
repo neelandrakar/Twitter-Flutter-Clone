@@ -6,6 +6,10 @@ class CustomSearchBar extends StatefulWidget {
   final String hintText;
   final Color backgroundColor;
   final Color hintColor;
+  final Color fullBackGroundColor;
+  final double height;
+  final double width;
+  final isAddNewChatPage;
   final void Function(String) onSubmit;
   final TextEditingController controller;
   const CustomSearchBar({
@@ -14,7 +18,11 @@ class CustomSearchBar extends StatefulWidget {
     required this.backgroundColor,
     required this.hintColor,
     required this.controller,
-    required this.onSubmit
+    required this.onSubmit,
+    this.width = 250,
+    this.height = 35,
+    this.fullBackGroundColor = Pallete.searchBarColor,
+    this.isAddNewChatPage = false
   });
 
   @override
@@ -29,39 +37,42 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
     // searchController.text = 'Eden Hazard';
 
     return SizedBox(
-      height: 35,
-      width: 250,
-      child: TextField(
-        onSubmitted: (String input){
-          widget.onSubmit(input);
-        },
-        style: TextStyle(
-          color: Pallete.whiteColorSecond
-        ),
-        cursorColor: Pallete.blueColor,
-        controller: widget.controller,
-        decoration: InputDecoration(
-          hintText: widget.hintText,
-          contentPadding: EdgeInsets.all(0).copyWith(left: 13),
-          fillColor: Pallete.searchFieldColor,
-          filled: true,
-          hintMaxLines: 1,
-          hintStyle: TextStyle(color: Pallete.postHintColor),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide: BorderSide(
-              width: 0
-            )
+      height: widget.height,
+      width: widget.width,
+      child:TextField(
+
+            onSubmitted: (String input){
+              widget.onSubmit(input);
+            },
+            style: TextStyle(
+              color: Pallete.whiteColorSecond
+            ),
+            cursorColor: Pallete.blueColor,
+            controller: widget.controller,
+            decoration: InputDecoration(
+              prefixIcon: widget.isAddNewChatPage ? Icon(Icons.search_outlined,color: Pallete.postHintColor,size: 25,) : null,
+              hintText: widget.hintText,
+              contentPadding: EdgeInsets.all(0).copyWith(left: 13),
+              fillColor: widget.fullBackGroundColor,
+              filled: true,
+              hintMaxLines: 1,
+              hintStyle: TextStyle(color: Pallete.postHintColor),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide(
+                  width: 0
+                )
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide(
+                  width: 0
+              )
           ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(
-              width: 0
-          )
-      ),
-          // Add a clear button to the search bar
-        ),
-      ),
+              // Add a clear button to the search bar
+            ),
+          ),
+
     );
 
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:twitter_clone/constants/my_colors.dart';
 import 'package:twitter_clone/features/home/screens/home_screen.dart';
+import 'package:twitter_clone/features/messeges/screens/add_new_chat.dart';
 import 'package:twitter_clone/features/tweet/screens/create_tweet_screen.dart';
 import 'package:twitter_clone/theme/pallete.dart';
 import 'package:twitter_clone/widgets/ui_constants/assets_constants.dart';
@@ -34,6 +35,11 @@ class _BottomBarState extends State<BottomBar> {
     Navigator.pushNamed(context, CreateTweetScreen.routeName);
 }
 
+  void navigateToAddNewChatScreen(){
+
+    Navigator.pushNamed(context, AddNewChat.routeName);
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -57,16 +63,16 @@ class _BottomBarState extends State<BottomBar> {
           floatingActionButton: FloatingActionButton(
             backgroundColor: Pallete.blueColor,
             onPressed: (){
-              navigateToCreateTweetScreen();
+              _page==4 ? navigateToAddNewChatScreen() : navigateToCreateTweetScreen();
             },
-            child: const Icon(
-              Icons.add,
+            child: Icon(
+              _page==4 ? Icons.message_outlined : Icons.add,
               color: myColors.whiteColor,
-              size: 28,
+              size: _page==4 ? 25 : 28,
             ),
           ),
           appBar:
-              _page==1 ? null :
+          (_page==1 || _page==4) ? null :
             MainAppBar(
               isMainScreen: true,
               isSearchScreen: _page==1 ? true : false,

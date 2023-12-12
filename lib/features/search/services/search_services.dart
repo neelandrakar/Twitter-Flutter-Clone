@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:twitter_clone/constants/http_error_handle.dart';
 import 'package:twitter_clone/models/topics.dart';
+import 'package:twitter_clone/models/tweets.dart';
 
 import '../../../constants/global_variables.dart';
 import '../../../constants/utils.dart';
@@ -88,6 +89,46 @@ class SearchServices{
     }
 
     return allFetchedSportsTopics;
+
+  }
+
+  Future<List<Tweets>> fetchTopTweets({
+    required BuildContext context,
+    required String searchedQuery
+  }) async {
+
+    List<Tweets> allFetchedTopTweets = [];
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    print('hellloooo');
+
+
+    try{
+      http.Response res = await http.get(
+        Uri.parse('$uri/api/search/top/?searchedQuery=$searchedQuery'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': userProvider.user.token,
+        },
+      );
+
+      HttpErrorHandle(
+          response: res,
+          context: context,
+          onSuccess: (){
+
+            print(res.body);
+
+            for (int i = 0; i < jsonDecode(res.body).length; i++) {
+              allFetchedTopTweets
+                  .add(Tweets.fromJson(jsonEncode(jsonDecode(res.body)[i])));
+            }
+          }
+      );
+    }catch(e){
+      showSnackBar(context, e.toString());
+    }
+
+    return allFetchedTopTweets;
 
   }
 }

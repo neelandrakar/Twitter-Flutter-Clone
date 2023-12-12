@@ -173,7 +173,7 @@ class _TweetCardState extends State<TweetCard> {
                                   maxLines: 1,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                      color: Pallete.whiteColor,
                                       fontSize: 16
                                   ),
                                 ),

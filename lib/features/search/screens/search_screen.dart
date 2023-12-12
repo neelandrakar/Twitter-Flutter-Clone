@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:twitter_clone/features/search/services/search_services.dart';
 import 'package:twitter_clone/features/search/widgets/custom_search_bar.dart';
 import 'package:twitter_clone/features/search/widgets/topic_card.dart';
 import 'package:twitter_clone/features/search/widgets/topic_viewer.dart';
+import 'package:twitter_clone/features/search/widgets/tweet_viewer.dart';
+import 'package:twitter_clone/models/tweets.dart';
 import 'package:twitter_clone/widgets/ui_constants/mainAppBar.dart';
 
 import '../../../constants/global_variables.dart';
@@ -21,6 +24,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
   ImageProvider<Object> backgroundImageProvider = AssetImage(AssetsConstants.searchIcon);
 
+  bool beforeSearch = true;
+  List<Tweets> allTweets = [];
 
 
 
@@ -28,7 +33,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
 
-    bool beforeSearch = true;
 
     final user = context
       .watch<UserProvider>()
@@ -47,6 +51,20 @@ class _SearchScreenState extends State<SearchScreen> {
   String tab4 = beforeSearch ? 'Sports' : 'Media';
   String tab5 = beforeSearch ? 'Entertainment' : 'List';
 
+  final SearchServices searchServices = SearchServices();
+
+
+  void clickSearch(String query) async{
+
+    beforeSearch ? print('failed') : print('success with $query');
+    allTweets = await searchServices.fetchTopTweets(context: context, searchedQuery: query);
+    beforeSearch = false;
+    print('length ${allTweets.length}');
+    setState(() {});
+    print('length2 ${allTweets.length}');
+
+  }
+
 
   return DefaultTabController(
       length: 5,
@@ -59,7 +77,7 @@ class _SearchScreenState extends State<SearchScreen> {
               backgroundColor: Pallete.greyColor,
               hintColor: Pallete.whiteColorSecond,
               controller: searchController,
-              onSubmit: print,
+              onSubmit: clickSearch,
             ),
             leading: beforeSearch ? Container(
                 margin: EdgeInsets.all(10),
@@ -152,7 +170,7 @@ class _SearchScreenState extends State<SearchScreen> {
             Expanded(
               child: TabBarView(
                 children: [
-                  TopicViewer(tabNo: 0),
+                  beforeSearch ? TopicViewer(tabNo: 0) : TweetViewer(allTweets: allTweets),
                   Text('Trending Screen',style: TextStyle(color: Pallete.whiteColor),),
                   Text('News Screen',style: TextStyle(color: Pallete.whiteColor),),
                   TopicViewer(tabNo: 3),

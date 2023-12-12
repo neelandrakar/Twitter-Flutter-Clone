@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_clone/constants/my_colors.dart';
 import 'package:twitter_clone/features/auth/services/auth_services.dart';
 import 'package:twitter_clone/features/home/screens/home_screen.dart';
+import 'package:twitter_clone/providers/message_provider.dart';
 import 'package:twitter_clone/providers/tweet_provider.dart';
 import 'package:twitter_clone/providers/user_provider.dart';
 import 'package:twitter_clone/router.dart';
@@ -16,7 +17,8 @@ void main() {
   runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context)=> UserProvider()),
-        ChangeNotifierProvider(create: (context)=> TweetProvider())
+        ChangeNotifierProvider(create: (context)=> TweetProvider()),
+        ChangeNotifierProvider(create: (context)=> MessageProvider()),
       ],
       child: const MyApp()));
 }
@@ -62,7 +64,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         scaffoldBackgroundColor: myColors.mainBackgroundColor,
         colorScheme:
-          ColorScheme.light(secondary: Colors.pink),
+          ColorScheme.light(secondary: Colors.grey),
         appBarTheme:AppBarTheme(
           elevation: 0,backgroundColor: myColors.mainBackgroundColor
         )

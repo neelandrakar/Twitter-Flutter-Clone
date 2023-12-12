@@ -5,7 +5,7 @@ class AssetsConstants {
   static const String homeOutlinedIcon = '$_svgsPath/home_outlined.svg';
   static const String notifFilledIcon = '$_svgsPath/notif_filled.svg';
   static const String notifOutlinedIcon = '$_svgsPath/notif_outlined.svg';
-  static const String searchIcon = '$_svgsPath/search.svg';
+  static  String searchIcon = '$_svgsPath/search.svg';
   static const String gifIcon = '$_svgsPath/gif.svg';
   static const String shareIcon = '$_svgsPath/share.svg';
   static const String emojiIcon = '$_svgsPath/emoji.svg';
@@ -17,4 +17,5 @@ class AssetsConstants {
   static const String viewsIcon = '$_svgsPath/views.svg';
   static const String verifiedIcon = '$_svgsPath/verified.svg';
   static const String noProfilePic = '$_svgsPath/no_profile_pic.png';
+  static const String groupIcon = '$_svgsPath/group_icon.svg';
 }
