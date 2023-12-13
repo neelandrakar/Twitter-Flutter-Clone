@@ -50,6 +50,6 @@ app.listen(PORT,'0.0.0.0',function(){
     console.log(`Connected at ${PORT}`);
 });
 
-server.listen(PORT, "192.168.184.6", () => {
+server.listen(PORT, "192.168.203.6", () => {
   console.log("socket server started");
 });

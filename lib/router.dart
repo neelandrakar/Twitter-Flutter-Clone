@@ -80,9 +80,10 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       );
 
     case ChatScreen.routeName:
+      var user = routeSettings.arguments as User;
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => const ChatScreen(),
+        builder: (_) => ChatScreen(receiver: user,),
       );
 
     default:

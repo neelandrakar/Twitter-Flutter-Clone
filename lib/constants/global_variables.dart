@@ -13,7 +13,7 @@ import 'package:twitter_clone/widgets/ui_constants/assets_constants.dart';
   String signUpPassword = '';
   int signUpPhone = 0;
   String signUpdateOfBirth = '';
-  String uri = 'http://192.168.184.6:3000';
+  String uri = 'http://192.168.203.6:3000';
   String loginCred = '';
   String tweetedByUsername = '';
 

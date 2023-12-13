@@ -1,21 +1,26 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:twitter_clone/constants/global_variables.dart';
+import 'package:twitter_clone/constants/my_colors.dart';
 import 'package:twitter_clone/constants/utils.dart';
 import 'package:twitter_clone/features/messeges/services/messages_services.dart';
 import 'package:twitter_clone/providers/message_provider.dart';
 import 'package:twitter_clone/theme/pallete.dart';
 import '../../../models/message.dart';
+import '../../../models/user.dart';
 import '../../../providers/user_provider.dart';
+import '../../../widgets/ui_constants/assets_constants.dart';
 
 class ChatScreen extends StatefulWidget {
 
   static const String routeName = '/chat-screen';
-  const ChatScreen({super.key});
+  final User receiver;
+  const ChatScreen({super.key, required this.receiver});
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -39,7 +44,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   fetchChatRoomId() async {
 
-    chatRoomId = await messagesService.fetchChatRoomId(context: context, receiverUserId: '6563cd9f89dd370f62f9131f');
+    chatRoomId = await messagesService.fetchChatRoomId(context: context, receiverUserId: widget.receiver.id);
     connectToRoom(chatRoomId);
 
   }
@@ -52,9 +57,9 @@ class _ChatScreenState extends State<ChatScreen> {
     socket.connect();
 
     socket.onConnect((data) {
-      print('user has joined $roomName');
       if (mounted) {
         socket.emit('/join_room', roomName);
+        print('user has joined $roomName');
       } else{
         print('error while connecting');
       }
@@ -72,8 +77,9 @@ class _ChatScreenState extends State<ChatScreen> {
     final user = Provider.of<UserProvider>(context, listen: false).user;
     if (mounted) {
       socket.emit('/send_message', {
-        'message': text,
-        'sender': user.name
+        'text': text,
+        'sender': user.name,
+        'receiver': widget.receiver.name
       });
     }
   }
@@ -84,8 +90,8 @@ class _ChatScreenState extends State<ChatScreen> {
         print('Received message: $data');
         // Handle the received message as needed
         showSnackBar(context, data['text']);
-        Provider.of<MessageProvider>(context, listen: false).addNewMessage(
-            Message.fromJson(data));
+        // Provider.of<MessageProvider>(context, listen: false).addNewMessage(
+        //     Message.fromJson(data));
 
       }
     });
@@ -105,11 +111,58 @@ class _ChatScreenState extends State<ChatScreen> {
 
     String name = user.name;
     String userId = user.id;
+    String userProfilePic = widget.receiver.profilePicture!;
+    ImageProvider<Object> backgroundImageProvider = AssetImage(AssetsConstants.noProfilePic);
+
+    if (userProfilePic != '') {
+      backgroundImageProvider = NetworkImage(userProfilePic);
+    } else {
+      backgroundImageProvider = AssetImage(AssetsConstants.noProfilePic);
+    }
+
+
+
 
     return Scaffold(
-      backgroundColor: Pallete.greyColor,
+      backgroundColor: myColors.mainBackgroundColor,
       appBar: AppBar(
-        title: const Text('Flutter Socket.IO'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              backgroundImage: backgroundImageProvider,
+              radius: 15,
+            ),
+            SizedBox(width: 10,),
+            Text(
+              widget.receiver.name,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Pallete.whiteColorSecond,
+                  fontSize: 17
+              ),
+            ),
+            SizedBox(width: 5,),
+            if(widget.receiver.hasBlue==1)
+              SvgPicture.asset(
+                AssetsConstants.verifiedIcon,
+                width: 14,
+                height: 14,
+              )
+          ],
+        ),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 12.0),
+            child: Icon(
+              Icons.info_outline,
+              color: Pallete.whiteColorSecond,
+              size: 22,
+            ),
+          )
+        ],
       ),
       body: Column(
         children: [
@@ -118,35 +171,49 @@ class _ChatScreenState extends State<ChatScreen> {
               builder: (_, provider, __) => ListView.separated(
                 padding: const EdgeInsets.all(16),
                 itemBuilder: (context, index) {
+
+
                   final message = provider.messages[index];
-                  return Wrap(
-                    alignment: message.senderUsername == name
-                        ? WrapAlignment.end
-                        : WrapAlignment.start,
-                    children: [
-                      Card(
-                        color: message.senderUsername == name
-                            ? Theme.of(context).primaryColorLight
-                            : Colors.white,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment:
-                            message.senderUsername == name
-                                ? CrossAxisAlignment.end
-                                : CrossAxisAlignment.start,
-                            children: [
-                              Text(message.message),
-                              Text(
-                                DateFormat('hh:mm a').format(message.sentAt),
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
+                  bool isMe = message.sender == user.id ? true : false;
+
+
+                  return Align(
+                    alignment: isMe
+                        ? Alignment.topRight
+                        : Alignment.topLeft,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 12),
+                          decoration: BoxDecoration(
+                              color: isMe
+                                  ? Pallete.blueColor
+                                  : Pallete.receiverTextColor,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
+                                bottomLeft: isMe ? Radius.circular(20) : Radius.circular(3),
+                                bottomRight: isMe ? Radius.circular(3) : Radius.circular(20),
+                              )),
+                          child:
+                          Text(
+                            message.text,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15
+                            ),
                           ),
+                          // Text(
+                          //   DateFormat('hh:mm a').format(message.sentAt),
+                          //   style: Theme.of(context).textTheme.bodySmall,
+                          // ),
+
                         ),
-                      )
-                    ],
+                        Text('data', style: TextStyle(color: Colors.red),)
+
+                      ],
+                    ),
                   );
                 },
                 separatorBuilder: (_, index) => const SizedBox(

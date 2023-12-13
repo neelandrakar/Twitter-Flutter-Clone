@@ -70,7 +70,7 @@ class User {
       mobno: map['mobno'] as int,
       birthDate: map['birthDate'] as String,
       password: map['password'] as String,
-      bio: map['bio'] as String,
+      bio: map['bio'] as String? ?? '',
       token: map['token'] as String,
       created_at: DateTime.parse(map['created_at']),
       hasBlue: map['hasBlue'] as int,

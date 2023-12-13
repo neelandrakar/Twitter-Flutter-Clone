@@ -439,8 +439,8 @@ userRouter.post('/api/follow', auth, async (req,res) => {
 
     if(!userIsAlreadyFollowed){
 
-    user.push({
-        user_ffollowingollowed: following_user_id,
+    user.following.push({
+        user_followed: following_user_id,
         user_followed_on: Date.now()
     });
 

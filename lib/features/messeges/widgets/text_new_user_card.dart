@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:twitter_clone/features/messeges/screens/chat_screen.dart';
 
 import '../../../models/user.dart';
 import '../../../providers/user_provider.dart';
@@ -28,11 +29,16 @@ class _TextNewUserCardState extends State<TextNewUserCard> {
       backgroundImageProvider = AssetImage(AssetsConstants.noProfilePic);
     }
 
+    void navigateToChatScreen(){
+      Navigator.pushNamed(context, ChatScreen.routeName, arguments: widget.user);
+    }
+
 
 
     return InkWell(
       onTap: (){
         print(widget.user.name);
+        navigateToChatScreen();
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 13),
