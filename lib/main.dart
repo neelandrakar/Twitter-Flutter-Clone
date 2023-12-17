@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:twitter_clone/constants/my_colors.dart';
 import 'package:twitter_clone/features/auth/services/auth_services.dart';
 import 'package:twitter_clone/features/home/screens/home_screen.dart';
+import 'package:twitter_clone/providers/chat_room_provider.dart';
 import 'package:twitter_clone/providers/message_provider.dart';
 import 'package:twitter_clone/providers/tweet_provider.dart';
 import 'package:twitter_clone/providers/user_provider.dart';
@@ -19,6 +20,7 @@ void main() {
         ChangeNotifierProvider(create: (context)=> UserProvider()),
         ChangeNotifierProvider(create: (context)=> TweetProvider()),
         ChangeNotifierProvider(create: (context)=> MessageProvider()),
+        ChangeNotifierProvider(create: (context)=> ChatRoomProvider()),
       ],
       child: const MyApp()));
 }

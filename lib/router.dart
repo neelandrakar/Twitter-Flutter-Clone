@@ -6,6 +6,7 @@ import 'package:twitter_clone/features/auth/screens/signup_screen_one.dart';
 import 'package:twitter_clone/features/auth/screens/signup_screen_three.dart';
 import 'package:twitter_clone/features/auth/screens/signup_screen_two.dart';
 import 'package:twitter_clone/features/messeges/screens/add_new_chat.dart';
+import 'package:twitter_clone/features/messeges/screens/chat_list.dart';
 import 'package:twitter_clone/features/messeges/screens/chat_screen.dart';
 import 'package:twitter_clone/features/profile/screens/profile_screen.dart';
 import 'package:twitter_clone/features/tweet/screens/create_tweet_screen.dart';
@@ -59,6 +60,12 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         builder: (_) => const CreateTweetScreen(),
       );
 
+    // case ChatList.routeName:
+    //   return MaterialPageRoute(
+    //     settings: routeSettings,
+    //     builder: (_) => const ChatList(),
+    //   );
+
     case TweetDetails.routeName:
       var tweet = routeSettings.arguments as Tweets;
       return MaterialPageRoute(
@@ -80,10 +87,18 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       );
 
     case ChatScreen.routeName:
-      var user = routeSettings.arguments as User;
+      ChatScreen chatScreen = routeSettings.arguments as ChatScreen;
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => ChatScreen(receiver: user,),
+        builder: (_) => ChatScreen(
+          chatRoomId: chatScreen.chatRoomId,
+          receiversName: chatScreen.receiversName,
+          receiversUsername: chatScreen.receiversUsername,
+          receiversProfilePic: chatScreen.receiversProfilePic,
+          receiversBlueStatus: chatScreen.receiversBlueStatus,
+          receiversId: chatScreen.receiversId,
+          chatRoom: chatScreen.chatRoom,
+        ),
       );
 
     default:

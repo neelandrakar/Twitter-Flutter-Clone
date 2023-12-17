@@ -12,5 +12,6 @@ class Pallete {
   static const Color greenColor = Colors.green;
   static const Color postHintColor = Colors.white38;
   static const Color searchFieldColor = Colors.white12;
+  static const Color textTimeColor = Colors.white54;
   static Color? receiverTextColor = Colors.blueGrey[900];
 }
